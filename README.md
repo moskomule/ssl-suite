@@ -4,6 +4,13 @@ A Semi-Supervised Learning suite using PyTorch.
 
 The implementation of SSL methods are based on https://github.com/google-research/mixmatch
 
+Currently, the following methods are implemented:
+* Interpolation Consistency Training
+* Mean Teacher
+* MixMatch
+* Pseudo Label
+* Virtual Adversarial Training
+
 ## Requirements
 
 * Python>=3.7
@@ -34,12 +41,12 @@ For configurable values, see files in `config`.
 
 
 ```bibtex
-@misc{homura,
+@misc{ssl-suite,
     author = {Ryuichiro Hataya},
-    title = {homura},
-    year = {2018},
+    title = {ssl-suite: Semi-supervised Learning suite using PyTorch},
+    year = {2019},
     publisher = {GitHub},
     journal = {GitHub repository},
-    howpublished = {\url{https://GitHub.com/moskomule/homura}},
+    howpublished = {\url{https://GitHub.com/moskomule/ssl-suite}},
 }
 ```
