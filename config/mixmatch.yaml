@@ -1,0 +1,22 @@
+model:
+  temperature: 0.5
+  gamma: 0.75
+  coef_max: 75
+  coef_iters: 1_000
+  ema_rate: 0.999
+
+data:
+  name: cifar10
+  labeled_size: 4_000
+  unlabeled_size: 41_000
+  val_size: 5_000
+  batch_size: 64
+  random_state: 0
+  download: false
+  pilaugment: true
+
+optim:
+  name: adam
+  lr: 0.002
+  epochs: 1000
+  wd: 0.02

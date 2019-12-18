@@ -1,0 +1,23 @@
+model:
+  coef_max: 0.3
+  coef_iters: 400
+  coef_ent: 0.06
+  xi: 1e-6
+  eps: 6
+  ema_rate: 0.999
+  smoothing: 0.01
+
+data:
+  name: cifar10
+  labeled_size: 4_000
+  unlabeled_size: 41_000
+  val_size: 5_000
+  batch_size: 64
+  random_state: 0
+  download: false
+
+optim:
+  name: adam
+  epochs: 1000
+  lr: 0.002
+  wd: 0.02
