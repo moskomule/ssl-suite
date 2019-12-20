@@ -9,8 +9,8 @@ from backends.utils import get_task, SSLTrainerBase
 class ICTTrainer(SSLTrainerBase):
 
     def labeled(self,
-                input,
-                target):
+                input: torch.Tensor,
+                target: torch.Tensor):
         target = self.to_onehot(target, self.num_classes)
         input, target = self.mixup(input, target)
         output = self.model(input)
@@ -30,7 +30,6 @@ class ICTTrainer(SSLTrainerBase):
               input: torch.Tensor,
               target: torch.Tensor):
         if not torch.is_tensor(self.beta):
-            # very important for speed up
             self.beta = torch.tensor(self.beta).to(self.device)
         gamma = Beta(self.beta, self.beta).sample((input.size(0), 1, 1, 1))
         perm = torch.randperm(input.size(0))

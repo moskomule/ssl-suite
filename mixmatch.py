@@ -38,23 +38,14 @@ class MixmatchTrainer(SSLTrainerBase):
 
     def data_handle(self,
                     data: Tuple) -> Tuple:
-        pillow_aug = (len(data) == 5)
-        if pillow_aug:
-            # Pillow augmentation
-            input, target, u_x1, u_x2, _ = data
-            u_x, u_y = self.sharpen((u_x1, u_x2))
-        else:
-            input, target, u_x, _ = data
-            u_x, u_y = self.sharpen(u_x)
-        # l_x, l_y, u_x, u_y
+        input, target, u_x1, u_x2, _ = data
+        u_x, u_y = self.sharpen((u_x1, u_x2))
         return input, self.to_onehot(target), u_x, u_y
 
     def sharpen(self,
                 input: torch.Tensor or Tuple) -> Tuple[torch.Tensor, torch.Tensor]:
-
         u_b = torch.cat(input, dim=0)
-        with disable_bn_stats(self.model):
-            q_b = (self.model(input[0]).softmax(dim=1) + self.model(input[1]).softmax(dim=1)) / 2
+        q_b = (self.model(input[0]).softmax(dim=1) + self.model(input[1]).softmax(dim=1)) / 2
         q_b.pow_(1 / self.temperature).div_(q_b.sum(dim=1, keepdim=True))
         return u_b, q_b.repeat(2, 1)
 

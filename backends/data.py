@@ -60,32 +60,6 @@ def getitem(self, index):
         return self.transform(img), target
 
 
-class SubsetCIFAR10(CIFAR10):
-    CLASSES = {}
-
-    def __init__(self,
-                 root,
-                 train=True,
-                 transform=None,
-                 target_transform=None,
-                 download=False):
-        super(SubsetCIFAR10, self).__init__(root, train, transform, target_transform, download)
-
-    def make_subset(self):
-        indices = [i for i in range(len(self)) if self.targets[i] in self.CLASSES]
-        self.data = [self.data[i] for i in indices]
-        self.targets = [self.targets for i in indices]
-        return self
-
-
-class AnimalCIFAR10(SubsetCIFAR10):
-    CLASSES = {2, 3, 4, 5, 6, 7}
-
-
-class NonAnimalCIFAR10(SubsetCIFAR10):
-    CLASSES = {0, 1, 8, 9}
-
-
 class OriginalSVHN(SVHN):
     def __init__(self,
                  root,

@@ -21,8 +21,7 @@ class MeanTeacherTrainer(SSLTrainerBase):
                   input2: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         with disable_bn_stats(self.model):
             o1 = self.model(input1)
-            with torch.no_grad():
-                o2 = self.ema(input2)
+        o2 = self.ema(input2)
         return o1, F.mse_loss(o1.softmax(dim=1), o2.softmax(dim=1))
 
 
