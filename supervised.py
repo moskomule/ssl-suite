@@ -1,25 +1,56 @@
+from functools import partial
 from statistics import median
+from typing import Tuple, Mapping
 
+import hydra
+import torch
 import torch.nn.functional as F
-from homura import optim, lr_scheduler, callbacks, reporters, trainers
+from homura import optim, lr_scheduler, callbacks, reporters, trainers, Map
 from homura.vision.data.loaders import cifar10_loaders
 
+from backends.utils import EMAModel
 from backends.wrn import wrn28_2
 
 
-def main():
+class SupervisedTrainer(trainers.TrainerBase):
+    def __init__(self, *args, **kwargs):
+        super(SupervisedTrainer, self).__init__(*args, **kwargs)
+        self.ema = kwargs['ema_model'](self.model)
+
+    def iteration(self,
+                  data: Tuple[torch.Tensor]) -> Mapping[str, torch.Tensor]:
+        input, target = data
+        if self.is_train:
+            output = self.model(input)
+        else:
+            output = self.ema(input)
+        loss = self.loss_f(output, target)
+        if self.is_train:
+            self.optimizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
+            self.ema.update()
+        return Map(loss=loss, output=output)
+
+
+@hydra.main("config/supervised.yaml")
+def main(cfg):
     model = wrn28_2(num_classes=10)
-    train_loader, test_loader = cifar10_loaders(128)
-    optimizer = optim.SGD(lr=1e-1, momentum=0.9, weight_decay=5e-4)
-    scheduler = lr_scheduler.MultiStepLR([100, 150], gamma=0.2)
-    tq = reporters.TQDMReporter(range(200), verb=True)
+    train_loader, test_loader = cifar10_loaders(64)
+    optimizer = optim.Adam(lr=cfg.optim.lr)
+    tq = reporters.TQDMReporter(range(cfg.optim.epochs))
     c = [callbacks.AccuracyCallback(),
          callbacks.LossCallback(),
          reporters.IOReporter("."),
          tq]
 
-    with trainers.SupervisedTrainer(model, optimizer, F.cross_entropy, callbacks=c,
-                                    scheduler=scheduler) as trainer:
+    with SupervisedTrainer(model,
+                           optimizer,
+                           F.cross_entropy,
+                           callbacks=c,
+                           ema_model=partial(EMAModel, ema_rate=cfg.model.ema_rate,
+                                             weight_decay=cfg.optim.wd * cfg.optim.lr),
+                           ) as trainer:
         for _ in tq:
             trainer.train(train_loader)
             trainer.test(test_loader)
