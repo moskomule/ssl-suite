@@ -1,0 +1,9 @@
+data:
+  name: cifar10
+  batch_size: 64
+
+optim:
+  name: adam
+  epochs: 1000
+  lr: 0.002
+  wd: 0.02
