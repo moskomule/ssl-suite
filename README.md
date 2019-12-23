@@ -37,6 +37,8 @@ For configurable values, see files in `config`.
 --- | --- | --- | --- | --- | --- |
 4,000 | 0.90 | 0.89 | 0.91 | 0.82 | 0.82|
 
+c.f. Supervised setting `supervised.py` achieves 0.92 on 50,000 images and 0.77 on 4,000 images.
+ 
 ## Citation
 
 
@@ -47,6 +49,6 @@ For configurable values, see files in `config`.
     year = {2019},
     publisher = {GitHub},
     journal = {GitHub repository},
-    howpublished = {\url{https://GitHub.com/moskomule/ssl-suite}},
+    howpublished = {\url{https://github.com/moskomule/ssl-suite}},
 }
 ```
