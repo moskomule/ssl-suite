@@ -3,12 +3,17 @@ from torch.distributions import Categorical, kl_divergence
 from torch.nn import functional as F
 
 
-def _l2_normalize(input: torch.Tensor) -> torch.Tensor:
-    return input / (input.norm(p=2, dim=1, keepdim=True) + 1e-8)
+def normalize(input: torch.Tensor) -> torch.Tensor:
+    # since PyTorch does not support multi-dimensional max
+    size = input.size()
+    input = input.flatten(1)
+    input.div_(1e-12 + input.abs().max(dim=1, keepdim=True)[0])
+    input.div_((1e-6 + input).norm(p=2, dim=1, keepdim=True))
+    return input.view(size)
 
 
-def _kl(input: torch.Tensor,
-        target: torch.Tensor) -> torch.Tensor:
+def kl_div(input: torch.Tensor,
+           target: torch.Tensor) -> torch.Tensor:
     return kl_divergence(Categorical(logits=input), Categorical(logits=target)).mean()
 
 

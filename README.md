@@ -11,6 +11,10 @@ Currently, the following methods are implemented:
 * Pseudo Label
 * Virtual Adversarial Training
 
+## Updates
+
+* 2019/12/25 Update WideResNet compatible with google's implementations
+
 ## Requirements
 
 * Python>=3.7
@@ -35,9 +39,7 @@ For configurable values, see files in `config`.
 
 |Number of Labeled images | ICT | Mean Teacher | MixMatch | Pseudo Label | VAT |
 --- | --- | --- | --- | --- | --- |
-4,000 | 0.90 | 0.89 | 0.91 | 0.82 | 0.82|
-
-c.f. Supervised setting `supervised.py` achieves 0.92 on 50,000 images and 0.77 on 4,000 images.
+4,000 | 0.90 | 0.89 | 0.93 | 0.82 | 0.82|
  
 ## Citation
 

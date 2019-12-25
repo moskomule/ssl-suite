@@ -1,22 +1,19 @@
 # WideResNet proposed in http://arxiv.org/abs/1605.07146
 # modified as https://github.com/google-research/mixmatch/blob/master/libml/models.py
 #
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from homura.vision.models._intialization import init_parameters
 
-__all__ = ["WideResNet", "WideBasicModule", "wrn28_10", "wrn28_2"]
+bn_kwargs = dict(momentum=1 - 0.999, eps=1e-3)
 
 
 def conv3x3(in_planes, out_planes, stride=1):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=True)
 
 
 def conv1x1(in_planes, out_planes, stride=1):
-    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, padding=0, bias=False)
-
-
-bn_kwargs = dict(momentum=1 - 0.999, eps=1e-3)
+    return nn.Conv2d(in_planes, out_planes, kernel_size=1, stride=stride, padding=0, bias=True)
 
 
 class WideBasicModule(nn.Module):
@@ -25,27 +22,30 @@ class WideBasicModule(nn.Module):
                  in_planes: int,
                  planes: int,
                  dropout_rate: float,
-                 stride: int = 1):
+                 stride: int = 1,
+                 preact: bool = False):
         super(WideBasicModule, self).__init__()
         self.bn1 = nn.BatchNorm2d(in_planes, **bn_kwargs)
         self.conv1 = nn.Conv2d(in_planes, planes, (3, 3), 1, 1)
-        self.dropout = nn.Dropout(p=dropout_rate)
         self.bn2 = nn.BatchNorm2d(planes, **bn_kwargs)
         self.conv2 = nn.Conv2d(planes, planes, (3, 3), stride, 1)
-
+        self.preact = preact
         self.shortcut = None
         if stride != 1 or in_planes != planes:
             self.shortcut = conv1x1(in_planes, planes, stride)
 
-    def forward(self, x):
-        residual = x
-        x = self.dropout(self.conv1(F.leaky_relu(self.bn1(x), 0.1)))
-        x = self.conv2(F.leaky_relu(self.bn2(x), 0.1))
-        if self.shortcut is None:
-            x += residual
+    def forward(self,
+                input: torch.Tensor):
+
+        x = F.leaky_relu(self.bn1(input), 0.1)
+        if self.preact:
+            residual = x
         else:
-            x += self.shortcut(residual)
-        return x
+            residual = input
+        x = self.conv2(F.leaky_relu(self.bn2(self.conv1(x)), 0.1))
+        if self.shortcut is not None:
+            residual = self.shortcut(residual)
+        return x + residual
 
 
 class WideResNet(nn.Module):
@@ -72,21 +72,25 @@ class WideResNet(nn.Module):
 
     def initialize(self):
         # following author's implementation
-        init_parameters(self)
         for m in self.modules():
             if isinstance(m, nn.Linear):
-                nn.init.kaiming_normal_(m.weight)
+                nn.init.xavier_normal_(m.weight)
                 nn.init.constant_(m.bias, 0)
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(getattr(m, "running_mean"), 0)
                 nn.init.constant_(getattr(m, "running_var"), 1)
+            elif isinstance(m, nn.Conv2d):
+                _out, _, _k, _ = m.weight.size()
+                nn.init.normal_(m.weight, 0, 1 / (_k * _k * _out))
+                if hasattr(m, 'bias'):
+                    nn.init.constant_(m.bias, 0)
 
     def _wide_layer(self, block, planes, num_blocks, dropout_rate, stride):
         strides = [stride] + [1] * int(num_blocks - 1)
         layers = []
 
-        for stride in strides:
-            layers.append(block(self.in_planes, planes, dropout_rate, stride))
+        for i, stride in enumerate(strides):
+            layers.append(block(self.in_planes, planes, dropout_rate, stride, i == 0))
             self.in_planes = planes
         return nn.Sequential(*layers)
 
