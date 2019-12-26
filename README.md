@@ -40,6 +40,8 @@ For configurable values, see files in `config`.
 |Number of Labeled images | ICT | Mean Teacher | MixMatch | Pseudo Label | VAT |
 --- | --- | --- | --- | --- | --- |
 4,000 | 0.90 | 0.89 | 0.93 | 0.82 | 0.82|
+
+* Supervised learning on 50,000/4,000 images yields accuracy of 0.94/0.77.
  
 ## Citation
 
