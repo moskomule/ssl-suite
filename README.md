@@ -35,13 +35,27 @@ If you want to change configurations from the default values, do something like
 
 For configurable values, see files in `config`.
 
-## Benchmarks (on CIFAR-10)
+## Benchmarks
+
+### CIFAR-10
 
 |Number of Labeled images | ICT | Mean Teacher | MixMatch | Pseudo Label | VAT |
 --- | --- | --- | --- | --- | --- |
 4,000 | 0.90 | 0.89 | 0.93 | 0.82 | 0.82|
 
 * Supervised learning on 50,000/4,000 images yields accuracy of 0.94/0.77.
+
+### SVHN
+
+**TO BE UPDATED**
+
+`python {ict,mean_teacher,mixmatch,pseudo_label,vat}.py data.name=svhn data.labeled_size=1000 data.unlabeled_size=64931 data.val_size=7326`
+
+|Number of Labeled images | ICT | Mean Teacher | MixMatch | Pseudo Label | VAT |
+--- | --- | --- | --- | --- | --- |
+4,000 | - | - | - | - | -|
+
+* Supervised learning on 50,000/4,000 images yields accuracy of -/-.
  
 ## Citation
 

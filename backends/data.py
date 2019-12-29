@@ -1,3 +1,4 @@
+import itertools
 import random
 import shutil
 from copy import deepcopy
@@ -16,6 +17,7 @@ logger = get_logger(__file__)
 
 
 class TinyImageNet(ImageFolder):
+    # tiny imagenet dataset
 
     def __init__(self, root, train=True, transform=None, target_transform=None, download=False):
         root = Path(root).expanduser()
@@ -67,7 +69,7 @@ class OriginalSVHN(SVHN):
                  transform=None,
                  target_transform=None,
                  download=False):
-        super(OriginalSVHN, self).__init__(root, split="train" if train else "val", transform=transform,
+        super(OriginalSVHN, self).__init__(root, split="train" if train else "test", transform=transform,
                                            target_transform=target_transform, download=download)
         self.data = [Image.fromarray(np.transpose(img, (1, 2, 0))) for img in self.data]
         self.targets = self.labels
@@ -161,8 +163,9 @@ def _balanced_shuffle(self: VisionDataset,
     cls_to_idx = {i: [j for j in range(len(self.data)) if self.targets[j] == i] for i in range(num_classes)}
     for k, v in cls_to_idx.items():
         cls_to_idx[k] = random.sample(v, k=len(v))
-    indices = sum([list(z) for z in zip(*cls_to_idx.values())],
+    indices = sum([list(z) for z in itertools.zip_longest(*cls_to_idx.values())],
                   [])
+    indices = [i for i in indices if i is not None]
     self.data = [self.data[i] for i in indices]
     self.targets = [self.targets[i] for i in indices]
     return self
