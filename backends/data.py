@@ -1,5 +1,3 @@
-import itertools
-import random
 import shutil
 from copy import deepcopy
 from pathlib import Path
@@ -92,7 +90,7 @@ def get_dataloader(dataset: str,
                                 sampler=RandomSampler(labeled_set, True, labeled_size),
                                 num_workers=2, pin_memory=True)
     unlabeled_loader = DataLoader(unlabeled_set, batch_size=batch_size,
-                                  sampler=RandomSampler(unlabeled_set, True, unlabeled_size),
+                                  sampler=RandomSampler(unlabeled_set, True, 64 * 1024),
                                   num_workers=2, pin_memory=True)
     val_loader = DataLoader(val_set, batch_size=2 * batch_size, pin_memory=True)
     test_loader = DataLoader(test_set, batch_size=2 * batch_size)
@@ -157,20 +155,6 @@ def _get_dataset(dataset: str,
     return labeled_set, unlabeled_set, val_set, test_set
 
 
-def _balanced_shuffle(self: VisionDataset,
-                      num_classes: int):
-    # utility to make balanced labeled data
-    cls_to_idx = {i: [j for j in range(len(self.data)) if self.targets[j] == i] for i in range(num_classes)}
-    for k, v in cls_to_idx.items():
-        cls_to_idx[k] = random.sample(v, k=len(v))
-    indices = sum([list(z) for z in itertools.zip_longest(*cls_to_idx.values())],
-                  [])
-    indices = [i for i in indices if i is not None]
-    self.data = [self.data[i] for i in indices]
-    self.targets = [self.targets[i] for i in indices]
-    return self
-
-
 def _split_dataset(dataset: VisionDataset,
                    labeled_size: int,
                    unlabeled_size: int,
@@ -180,12 +164,9 @@ def _split_dataset(dataset: VisionDataset,
     # split given dataset into labeled, unlabeled and val
 
     assert labeled_size + unlabeled_size + val_size == len(dataset)
-    if balanced:
-        _balanced_shuffle(dataset, num_classes)
-    else:
-        indices = torch.randperm(len(dataset))
-        dataset.data = [dataset.data[i] for i in indices]
-        dataset.targets = [dataset.targets for i in indices]
+    indices = torch.randperm(len(dataset))
+    dataset.data = [dataset.data[i] for i in indices]
+    dataset.targets = [dataset.targets for i in indices]
 
     labeled_set = dataset
     unlabeled_set = deepcopy(dataset)
@@ -205,6 +186,3 @@ if __name__ == '__main__':
     # download all datasets
 
     _get_dataset('cifar10', 4_000, 41_000, 5_000, download=True, balanced=False)
-    _get_dataset('cifar10+cifar100', 4_000, 41_000, 5_000, download=True, balanced=False)
-    _get_dataset('cifar10+svhn', 4_000, 41_000, 5_000, download=True, balanced=False)
-    _get_dataset('cifar10+tinyimagenet', 4_000, 41_000, 5_000, download=True, balanced=False)

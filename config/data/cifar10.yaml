@@ -1,0 +1,8 @@
+data:
+  name: cifar10
+  labeled_size: 4_000
+  unlabeled_size: 41_000
+  val_size: 5_000
+  batch_size: 64
+  random_state: 0
+  download: false

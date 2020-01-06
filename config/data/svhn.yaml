@@ -1,0 +1,8 @@
+data:
+  name: svhn
+  labeled_size: 1_000
+  unlabeled_size: 64_931
+  val_size: 7_326
+  batch_size: 64
+  random_state: 0
+  download: false
