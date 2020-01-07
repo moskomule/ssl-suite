@@ -5,7 +5,8 @@ model:
   ema_rate: 0.999
   smoothing: 0.01
 
-data: cifar10
+defaults:
+  - data: cifar10
 
 optim:
   name: adam
