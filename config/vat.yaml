@@ -1,3 +1,7 @@
+defaults:
+  - data: cifar10
+  - optim: adam
+
 model:
   coef_max: 0.3
   coef_iters: 400
@@ -7,11 +11,5 @@ model:
   ema_rate: 0.999
   smoothing: 0.01
 
-defaults:
-  - data: cifar10
-
 optim:
-  name: adam
-  epochs: 1000
-  lr: 0.002
   wd: 0.02

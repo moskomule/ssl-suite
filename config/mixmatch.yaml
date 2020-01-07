@@ -1,15 +1,13 @@
+defaults:
+  - data: cifar10
+  - optim: adam
+
 model:
   temperature: 0.5
   gamma: 0.75
   coef_max: 75
-  coef_iters: 1_000
+  coef_iters: 500
   ema_rate: 0.999
 
-defaults:
-  - data: cifar10
-
 optim:
-  name: adam
-  lr: 0.002
-  epochs: 1000
   wd: 0.02
