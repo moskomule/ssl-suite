@@ -19,23 +19,23 @@ class VATTrainer(SSLTrainerBase):
     def unlabeled(self,
                   input: torch.Tensor) -> (None, torch.Tensor, torch.Tensor):
         with disable_bn_stats(self.model):
-            u_loss = self.vat_loss(input)
-            e_loss = Categorical(logits=self.model(input)).entropy().mean()
+            logits = self.model(input)
+            u_loss = self.vat_loss(input, logits.clone().detach())
+            e_loss = Categorical(logits=logits).entropy().mean()
         return None, u_loss, e_loss
 
     def vat_loss(self,
-                 input: torch.Tensor) -> torch.Tensor:
-        with torch.no_grad():
-            pred = self.model(input)
+                 input: torch.Tensor,
+                 logits: torch.Tensor) -> torch.Tensor:
         d = normalize(input.clone().normal_())
         d.requires_grad_(True)
         pred_hat = self.model(input + self.xi * d)
-        adv_loss = kl_div(pred, pred_hat)
+        adv_loss = kl_div(logits, pred_hat)
         d_grad, = torch.autograd.grad([adv_loss], [d])
         d = normalize(d_grad)
         self.model.zero_grad()
         pred_hat = self.model(input + self.eps * d)
-        return kl_div(pred, pred_hat)
+        return kl_div(logits, pred_hat)
 
 
 if __name__ == "__main__":
