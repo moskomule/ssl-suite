@@ -37,23 +37,23 @@ For configurable values, see files in `config`.
 
 ## Benchmarks
 
+Following Berthelot+2019, the reported accuracy values are median of accuracy of last 20 epochs.
+
 ### CIFAR-10
 
 |Number of Labeled images | ICT | Mean Teacher | MixMatch | Pseudo Label | VAT |
 --- | --- | --- | --- | --- | --- |
-4,000 | 0.90 | 0.89 | 0.93 | 0.82 | 0.82|
+4,000 | 0.89 | 0.89 | 0.93 | 0.82 | 0.82 |
 
 * Supervised learning on 50,000/4,000 images yields accuracy of 0.94/0.77.
 
 ### SVHN
 
-**TO BE UPDATED**
-
-`python {ict,mean_teacher,mixmatch,pseudo_label,vat}.py data.name=svhn data.labeled_size=1000 data.unlabeled_size=64931 data.val_size=7326`
+`python {ict,mean_teacher,mixmatch,pseudo_label,vat}.py data.name=svhn data.labeled_size=1000 data.unlabeled_size=64931 data.val_size=7326 ${MODEL_SPECIFIC_SETTINGS}`
 
 |Number of Labeled images | ICT | Mean Teacher | MixMatch | Pseudo Label | VAT |
 --- | --- | --- | --- | --- | --- |
-4,000 | - | - | - | - | -|
+1,000 | 0.91 | 0.96 | 0.94 | 0.88 | 0.90 |
 
 * Supervised learning on 50,000/4,000 images yields accuracy of -/-.
  
