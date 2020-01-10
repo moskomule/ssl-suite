@@ -35,7 +35,6 @@ class SupervisedTrainer(trainers.TrainerBase):
 
 @hydra.main("config/supervised.yaml")
 def main(cfg):
-    assert cfg.data.name == 'cifar10'
     model = wrn28_2(num_classes=10)
     train_loader, test_loader = get_dataloaders(cfg.data.name, cfg.data.batch_size)
     optimizer = optim.Adam(lr=cfg.optim.lr)
