@@ -6,8 +6,8 @@ import hydra
 import torch
 import torch.nn.functional as F
 from homura import optim, callbacks, reporters, trainers, Map
-from homura.vision.data.loaders import cifar10_loaders
 
+from backends.supervised_backends import get_dataloaders
 from backends.utils import EMAModel
 from backends.wrn import wrn28_2
 
@@ -37,7 +37,7 @@ class SupervisedTrainer(trainers.TrainerBase):
 def main(cfg):
     assert cfg.data.name == 'cifar10'
     model = wrn28_2(num_classes=10)
-    train_loader, test_loader = cifar10_loaders(cfg.data.batch_size, val_size=50_000 - cfg.data.train_size)[:2]
+    train_loader, test_loader = get_dataloaders(cfg.data.name, cfg.data.batch_size)
     optimizer = optim.Adam(lr=cfg.optim.lr)
     tq = reporters.TQDMReporter(range(cfg.optim.epochs))
     c = [callbacks.AccuracyCallback(),
