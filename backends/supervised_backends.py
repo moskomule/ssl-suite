@@ -15,9 +15,9 @@ def get_dataloaders(dataset: str,
         dset.__getitem__ = getitem
         labeled_set = dset(root, train=True, transform=transforms.Compose(data_aug + norm_transform))
         with set_seed(seed):
-            indices = torch.randperm(len(dataset))
-            dataset.data = [dataset.data[i] for i in indices][:train_size]
-            dataset.targets = [dataset.targets[i] for i in indices][:train_size]
+            indices = torch.randperm(len(labeled_set))
+            labeled_set.data = [labeled_set.data[i] for i in indices][:train_size]
+            labeled_set.targets = [labeled_set.targets[i] for i in indices][:train_size]
         test_set = dset(root, train=False, transform=transforms.Compose(norm_transform))
         train_loader = DataLoader(labeled_set, batch_size=batch_size,
                                   sampler=RandomSampler(labeled_set, True),
