@@ -55,7 +55,7 @@ Following Berthelot+2019, the reported accuracy values are median of accuracy of
 --- | --- | --- | --- | --- | --- |
 1,000 | 0.91 | 0.96 | 0.94 | 0.88 | 0.90 |
 
-* Supervised learning on 50,000/4,000 images yields accuracy of -/-.
+* Supervised learning on 50,000/4,000 images yields accuracy of 0.97/-.
  
 ## Citation
 

@@ -9,7 +9,7 @@ from .data import DATASETS, getitem
 def get_dataloaders(dataset: str,
                     batch_size: int,
                     train_size: int,
-                    seed: int = 0) -> (DataLoader, DataLoader):
+                    seed: int) -> (DataLoader, DataLoader):
     if dataset in DATASETS.keys():
         dset, root, norm_transform, data_aug, num_cls = DATASETS[dataset]
         dset.__getitem__ = getitem
