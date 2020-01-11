@@ -36,7 +36,7 @@ class SupervisedTrainer(trainers.TrainerBase):
 @hydra.main("config/supervised.yaml")
 def main(cfg):
     model = wrn28_2(num_classes=10)
-    train_loader, test_loader = get_dataloaders(cfg.data.name, cfg.data.batch_size)
+    train_loader, test_loader = get_dataloaders(cfg.data.name, cfg.data.batch_size, cfg.data.train_size)
     optimizer = optim.Adam(lr=cfg.optim.lr)
     tq = reporters.TQDMReporter(range(cfg.optim.epochs))
     c = [callbacks.AccuracyCallback(),

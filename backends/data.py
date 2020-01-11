@@ -167,7 +167,7 @@ def _split_dataset(dataset: VisionDataset,
     assert labeled_size + unlabeled_size + val_size == len(dataset)
     indices = torch.randperm(len(dataset))
     dataset.data = [dataset.data[i] for i in indices]
-    dataset.targets = [dataset.targets for i in indices]
+    dataset.targets = [dataset.targets[i] for i in indices]
 
     labeled_set = dataset
     unlabeled_set = deepcopy(dataset)
