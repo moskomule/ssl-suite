@@ -172,7 +172,7 @@ class SSLTrainerBase(trainers.TrainerBase):
             elif len(u_out) == 3:
                 # entropy regularization
                 u_output, u_loss, e_loss = u_out
-                loss = l_loss + self.coef + self.coef_ent * e_loss
+                loss = l_loss + self.coef * u_loss + self.coef_ent * e_loss
             else:
                 raise NotImplementedError
 
