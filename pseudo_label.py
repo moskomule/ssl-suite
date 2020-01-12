@@ -20,7 +20,7 @@ class PseudoLabelTrainer(SSLTrainerBase):
         with disable_bn_stats(self.model):
             u_output = self.model(input)
         u_loss = F.cross_entropy(u_output, u_output.argmax(dim=1), reduction='none')
-        u_loss = ((u_loss > self.threshold).float() * u_loss).mean()
+        u_loss = ((u_output.softmax() > self.threshold).float() * u_loss).mean()
         return u_output, u_loss
 
 
