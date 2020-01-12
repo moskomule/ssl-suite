@@ -43,7 +43,7 @@ Following Berthelot+2019, the reported accuracy values are median of accuracy of
 
 |Number of Labeled images | ICT | Mean Teacher | MixMatch | Pseudo Label | VAT |
 --- | --- | --- | --- | --- | --- |
-4,000 | 0.89 | 0.89 | 0.93 | 0.82 | 0.82 |
+4,000 | 0.89 | 0.89 | 0.93 | - | - |
 
 * Supervised learning on 50,000/4,000 images yields accuracy of 0.94/0.82.
 
@@ -53,7 +53,7 @@ Following Berthelot+2019, the reported accuracy values are median of accuracy of
 
 |Number of Labeled images | ICT | Mean Teacher | MixMatch | Pseudo Label | VAT |
 --- | --- | --- | --- | --- | --- |
-1,000 | 0.91 | 0.96 | 0.94 | 0.88 | 0.90 |
+1,000 | 0.91 | 0.96 | 0.94 | - | - |
 
 * Supervised learning on 50,000/4,000 images yields accuracy of 0.97/0.88.
  
